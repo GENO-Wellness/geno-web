@@ -248,6 +248,10 @@ export interface WellnessMetric {
         | 'sleep'
         | 'water'
         | 'calories'
+        | 'financial_income'
+        | 'financial_expense'
+        | 'social_interaction'
+        | string
     value: number
     unit: string | null
     logged_at: string
@@ -454,4 +458,38 @@ export interface ChartDataItem {
     name: string
     amount?: number
     count?: number
+}
+
+// Message Types
+export interface Conversation {
+    id: number
+    uuid: string
+    participant_one_id: number
+    participant_two_id: number
+    session_id?: number
+    last_message_at?: string
+    other_participant: {
+        id: number
+        name: string
+        email: string
+        avatar?: string
+    }
+    latest_message?: Message
+    unread_count: number
+    created_at: string
+}
+
+export interface Message {
+    id: number
+    uuid: string
+    conversation_id: number
+    sender_id: number
+    body: string
+    read_at?: string
+    created_at: string
+    sender?: {
+        id: number
+        name: string
+        avatar?: string
+    }
 }

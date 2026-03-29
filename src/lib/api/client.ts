@@ -16,6 +16,8 @@ import type {
     WeeklySchedule,
     Notification,
     PaginatedResponse,
+    Conversation,
+    Message,
 } from '@/types'
 
 interface PaginationMeta {
@@ -168,8 +170,14 @@ class ApiClient {
         })
     }
 
-    async delete<T>(endpoint: string): Promise<T> {
-        return this.request<T>(endpoint, { method: 'DELETE' })
+    async delete<T>(endpoint: string, body?: Record<string, unknown>): Promise<T> {
+        return this.request<T>(endpoint, {
+            method: 'DELETE',
+            ...(body && {
+                body: JSON.stringify(body),
+                headers: { 'Content-Type': 'application/json' },
+            }),
+        })
     }
 }
 
@@ -255,6 +263,9 @@ export const authApi = {
         password: string
         password_confirmation: string
     }) => api.post<{ message: string }>('/auth/change-password', data),
+
+    deleteAccount: (password: string) =>
+        api.delete<{ message: string }>('/auth/account', { password }),
 
     getSettings: () =>
         api.get<{
@@ -701,6 +712,29 @@ export const providerDashboardApi = {
         api.get<{ data: ChartDataItem[] }>('/provider/analytics/sessions'),
     getRevenueAnalytics: () =>
         api.get<{ data: ChartDataItem[] }>('/provider/analytics/revenue'),
+}
+
+// Messages API
+export const messagesApi = {
+    list: () =>
+        api.get<{ conversations: Conversation[] }>('/messages'),
+
+    show: (uuid: string) =>
+        api.get<{ conversation: Conversation; messages: Message[] }>(
+            `/messages/${uuid}`,
+        ),
+
+    send: (data: { recipient_id: number; body: string }) =>
+        api.post<{ conversation: Conversation; message: Message }>(
+            '/messages',
+            data,
+        ),
+
+    reply: (uuid: string, body: string) =>
+        api.post<{ message: Message }>(`/messages/${uuid}`, { body }),
+
+    unreadCount: () =>
+        api.get<{ unread_count: number }>('/messages/unread-count'),
 }
 
 // Search API

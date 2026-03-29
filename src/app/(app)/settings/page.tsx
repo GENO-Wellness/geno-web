@@ -1,11 +1,13 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { useRouter } from 'next/navigation'
 import { AppHeader } from '@/components/layout/app-header'
-import { FiUser, FiBell, FiShield, FiTrash2, FiLoader } from 'react-icons/fi'
+import { FiUser, FiBell, FiShield, FiTrash2, FiLoader, FiAlertTriangle, FiX } from 'react-icons/fi'
 import { authApi } from '@/lib/api/client'
 import { toast } from 'sonner'
 import { useAuth } from '@/lib/hooks/use-auth'
+import { useAuthStore } from '@/lib/stores/auth-store'
 import { cn } from '@/lib/utils'
 
 interface NotificationSettings {
@@ -149,17 +151,33 @@ export default function SettingsPage() {
         }
     }
 
-    const handleDeleteAccount = async () => {
-        if (
-            !confirm(
-                'Are you sure you want to delete your account? This action cannot be undone.',
-            )
-        )
-            return
+    const router = useRouter()
+    const { logout } = useAuthStore()
+    const [showDeleteModal, setShowDeleteModal] = useState(false)
+    const [deletePassword, setDeletePassword] = useState('')
+    const [isDeleting, setIsDeleting] = useState(false)
 
-        toast.error(
-            'Account deletion not yet available. Please contact support.',
-        )
+    const handleDeleteAccount = () => {
+        setShowDeleteModal(true)
+    }
+
+    const confirmDeleteAccount = async () => {
+        if (!deletePassword) {
+            toast.error('Please enter your password to confirm')
+            return
+        }
+        setIsDeleting(true)
+        try {
+            await authApi.deleteAccount(deletePassword)
+            toast.success('Account deleted successfully')
+            await logout()
+            router.push('/login')
+        } catch (error: unknown) {
+            const apiError = error as { message?: string }
+            toast.error(apiError.message || 'Failed to delete account')
+        } finally {
+            setIsDeleting(false)
+        }
     }
 
     const tabs = [
@@ -397,6 +415,71 @@ export default function SettingsPage() {
                     )}
                 </div>
             </main>
+
+            {/* Delete Account Modal */}
+            {showDeleteModal && (
+                <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 p-4">
+                    <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl">
+                        <div className="flex items-center justify-between mb-4">
+                            <div className="flex items-center gap-2 text-red-600">
+                                <FiAlertTriangle className="w-5 h-5" />
+                                <h3 className="text-lg font-semibold">
+                                    Delete Account
+                                </h3>
+                            </div>
+                            <button
+                                onClick={() => {
+                                    setShowDeleteModal(false)
+                                    setDeletePassword('')
+                                }}
+                                className="p-1 hover:bg-gray-100 rounded-lg">
+                                <FiX className="w-5 h-5" />
+                            </button>
+                        </div>
+
+                        <p className="text-sm text-gray-600 mb-4">
+                            This action is{' '}
+                            <strong>permanent and cannot be undone</strong>.
+                            All your data, sessions, and wellness records
+                            will be permanently deleted.
+                        </p>
+
+                        <div className="mb-4">
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Enter your password to confirm
+                            </label>
+                            <input
+                                type="password"
+                                value={deletePassword}
+                                onChange={e =>
+                                    setDeletePassword(e.target.value)
+                                }
+                                placeholder="Your password"
+                                className="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm focus:border-red-500 focus:outline-none"
+                            />
+                        </div>
+
+                        <div className="flex gap-2">
+                            <button
+                                onClick={() => {
+                                    setShowDeleteModal(false)
+                                    setDeletePassword('')
+                                }}
+                                className="flex-1 rounded-xl border border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50">
+                                Cancel
+                            </button>
+                            <button
+                                onClick={confirmDeleteAccount}
+                                disabled={!deletePassword || isDeleting}
+                                className="flex-1 rounded-xl bg-red-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-50">
+                                {isDeleting
+                                    ? 'Deleting...'
+                                    : 'Delete My Account'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }
