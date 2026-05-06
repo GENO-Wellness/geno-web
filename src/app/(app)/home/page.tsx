@@ -5,6 +5,10 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { toast } from 'sonner'
 import { AppHeader } from '@/components/layout/app-header'
+import {
+    getServiceTone,
+    ServiceVisual,
+} from '@/components/services/service-visual'
 import { useAuthStore } from '@/lib/stores/auth-store'
 import { useWellnessStore } from '@/lib/stores/wellness-store'
 import { contentApi, servicesApi } from '@/lib/api/client'
@@ -68,21 +72,53 @@ const moods = [
     { id: 'tired', emoji: '😴' },
 ]
 
-// Map service slugs to local images
-const serviceImages: Record<string, string> = {
-    counselling: '/images/services/counseling.jpg',
-    coaching: '/images/services/coaching.jpg',
-    training: '/images/services/exercise.jpg',
-    mentorship: '/images/services/mentorship.jpg',
-    consultation: '/images/services/consultation.jpg',
-    other: '/images/services/diary.jpg',
-    'mental-wellness': '/images/services/practice.jpg',
-    medical: '/images/services/exercise.jpg',
-    'financial-wellness': '/images/services/finance.jpg',
-    'social-wellness': '/images/services/community.jpg',
-    'work-life': '/images/services/work.jpg',
-    purpose: '/images/services/spiritual.jpg',
-}
+const fallbackArticles: Article[] = [
+    {
+        id: -1,
+        slug: 'financial-wellness-basics',
+        title: 'Financial Wellness: Where to Begin',
+        subtitle: 'Start with simple habits that reduce money stress.',
+        excerpt: 'Start with simple habits that reduce money stress.',
+        featured_image: '/images/services/finance.jpg',
+        category: 'financial',
+        tags: [],
+        is_featured: false,
+        published_at: null,
+        view_count: 0,
+        reading_time_minutes: 4,
+        author_name: 'GENO Wellness Team',
+    },
+    {
+        id: -2,
+        slug: 'understanding-your-mood-patterns',
+        title: 'Understanding Your Mood Patterns',
+        subtitle: 'Notice triggers and build a steadier daily rhythm.',
+        excerpt: 'Notice triggers and build a steadier daily rhythm.',
+        featured_image: '/images/services/mental_wellness.jpg',
+        category: 'mental-health',
+        tags: [],
+        is_featured: false,
+        published_at: null,
+        view_count: 0,
+        reading_time_minutes: 3,
+        author_name: 'GENO Wellness Team',
+    },
+    {
+        id: -3,
+        slug: 'all-it-takes-is-10-mindful-minutes',
+        title: 'All it Takes is 10 Mindful Minutes',
+        subtitle: 'A short daily reset for attention and calm.',
+        excerpt: 'A short daily reset for attention and calm.',
+        featured_image: '/images/services/practice.jpg',
+        category: 'mindfulness',
+        tags: [],
+        is_featured: true,
+        published_at: null,
+        view_count: 0,
+        reading_time_minutes: 10,
+        author_name: 'GENO Wellness Team',
+    },
+]
 
 export default function HomePage() {
     const { user } = useAuthStore()
@@ -101,11 +137,21 @@ export default function HomePage() {
                 await Promise.all([
                     servicesApi.list().catch(() => ({ services: [] })),
                     contentApi.getDailyTip().catch(() => ({ tip: null })),
-                    contentApi.getArticles().catch(() => ({ articles: [] })),
+                    contentApi
+                        .getArticles({ limit: 3 })
+                        .catch(() => ({ articles: [] })),
                 ])
             setServices(servicesResult.services)
             setTip(tipResult.tip as WellnessTip | null)
-            setArticles((articlesResult.articles as Article[]).slice(0, 3))
+            const fetchedArticles = (articlesResult.articles as Article[]).slice(
+                0,
+                3,
+            )
+            setArticles(
+                fetchedArticles.length > 0
+                    ? fetchedArticles
+                    : fallbackArticles,
+            )
         } catch (error) {
             console.error('Failed to fetch home data:', error)
         } finally {
@@ -268,31 +314,27 @@ export default function HomePage() {
                     </div>
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                         {services.slice(0, 4).map(service => {
-                            const imageSrc =
-                                serviceImages[service.slug] ||
-                                normalizeAssetSrc(service.image_path)
+                            const tone = getServiceTone(service.slug)
 
                             return (
                                 <Link
                                     key={service.id}
                                     href={`/services/${service.slug}`}
-                                    className="surface-card surface-card-hover overflow-hidden"
+                                    className={cn(
+                                        'surface-card surface-card-hover flex min-h-40 flex-col p-4 shadow-lg',
+                                        tone.shadow,
+                                    )}
                                 >
-                                    <div className="relative h-28 sm:h-32 bg-gray-200">
-                                        {imageSrc && (
-                                            <Image
-                                                src={imageSrc}
-                                                alt={service.title}
-                                                fill
-                                                className="object-cover"
-                                            />
-                                        )}
-                                    </div>
-                                    <div className="p-3">
-                                        <p className="font-medium text-gray-900 text-sm line-clamp-1">
+                                    <ServiceVisual
+                                        slug={service.slug}
+                                        className="size-12"
+                                        iconClassName="size-6"
+                                    />
+                                    <div className="mt-4 min-w-0">
+                                        <p className="line-clamp-2 text-sm font-semibold leading-tight text-gray-950">
                                             {service.title}
                                         </p>
-                                        <p className="text-xs text-gray-500 mt-1 line-clamp-2">
+                                        <p className="mt-1 line-clamp-2 text-xs leading-5 text-gray-500">
                                             {service.subtitle}
                                         </p>
                                     </div>
@@ -303,50 +345,62 @@ export default function HomePage() {
                 </section>
 
                 {/* Recommended Articles */}
-                {articles.length > 0 && (
-                    <section>
-                        <div className="flex items-center justify-between mb-3">
-                            <h2 className="font-semibold text-gray-900">
-                                Recommended for You
-                            </h2>
-                        </div>
-                        <div className="space-y-3">
-                            {articles.map(article => (
+                <section>
+                    <div className="flex items-center justify-between mb-3">
+                        <h2 className="font-semibold text-gray-900">
+                            Recommended for You
+                        </h2>
+                    </div>
+                    <div className="space-y-3">
+                        {(articles.length > 0
+                            ? articles
+                            : fallbackArticles
+                        ).map(article => {
+                            const imageSrc = normalizeAssetSrc(
+                                article.featured_image,
+                            )
+                            const subtitle =
+                                article.subtitle ?? article.excerpt ?? ''
+
+                            return (
                                 <Link
                                     key={article.id}
                                     href={`/articles/${article.slug}`}
                                     className="surface-card surface-card-hover flex gap-3 p-3"
                                 >
                                     <div className="relative w-20 h-20 rounded-lg bg-gray-200 flex-shrink-0 overflow-hidden">
-                                        {normalizeAssetSrc(
-                                            article.featured_image,
-                                        ) && (
+                                        {imageSrc ? (
                                             <Image
-                                                src={
-                                                    normalizeAssetSrc(
-                                                        article.featured_image,
-                                                    ) as string
-                                                }
+                                                src={imageSrc}
                                                 alt={article.title}
                                                 fill
                                                 className="object-cover"
                                             />
+                                        ) : (
+                                            <div className="flex h-full w-full items-center justify-center bg-primary/10 text-primary">
+                                                <FiStar className="size-6" />
+                                            </div>
                                         )}
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <p className="font-medium text-gray-900 line-clamp-2">
                                             {article.title}
                                         </p>
+                                        {subtitle && (
+                                            <p className="text-xs text-gray-500 mt-1 line-clamp-2">
+                                                {subtitle}
+                                            </p>
+                                        )}
                                         <p className="text-xs text-gray-500 mt-1">
                                             {article.reading_time_minutes} min
                                             read
                                         </p>
                                     </div>
                                 </Link>
-                            ))}
-                        </div>
-                    </section>
-                )}
+                            )
+                        })}
+                    </div>
+                </section>
 
                 {/* Wellness Stats Preview */}
                 {user?.wellness_stats && (
