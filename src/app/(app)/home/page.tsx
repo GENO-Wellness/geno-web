@@ -14,6 +14,7 @@ import { useWellnessStore } from '@/lib/stores/wellness-store'
 import { contentApi, servicesApi } from '@/lib/api/client'
 import { Service, WellnessTip, Article } from '@/types'
 import { cn, getGreeting, normalizeAssetSrc } from '@/lib/utils'
+import { isServiceBookable } from '@/lib/service-catalog'
 import {
     FiChevronRight,
     FiHeart,
@@ -313,34 +314,37 @@ export default function HomePage() {
                         </Link>
                     </div>
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                        {services.slice(0, 4).map(service => {
-                            const tone = getServiceTone(service.slug)
+                        {services
+                            .filter(service => isServiceBookable(service.slug))
+                            .slice(0, 4)
+                            .map(service => {
+                                const tone = getServiceTone(service.slug)
 
-                            return (
-                                <Link
-                                    key={service.id}
-                                    href={`/services/${service.slug}`}
-                                    className={cn(
-                                        'surface-card surface-card-hover flex min-h-40 flex-col p-4 shadow-lg',
-                                        tone.shadow,
-                                    )}
-                                >
-                                    <ServiceVisual
-                                        slug={service.slug}
-                                        className="size-12"
-                                        iconClassName="size-6"
-                                    />
-                                    <div className="mt-4 min-w-0">
-                                        <p className="line-clamp-2 text-sm font-semibold leading-tight text-gray-950">
-                                            {service.title}
-                                        </p>
-                                        <p className="mt-1 line-clamp-2 text-xs leading-5 text-gray-500">
-                                            {service.subtitle}
-                                        </p>
-                                    </div>
-                                </Link>
-                            )
-                        })}
+                                return (
+                                    <Link
+                                        key={service.id}
+                                        href={`/services/${service.slug}`}
+                                        className={cn(
+                                            'surface-card surface-card-hover flex min-h-40 flex-col p-4 shadow-lg',
+                                            tone.shadow,
+                                        )}
+                                    >
+                                        <ServiceVisual
+                                            slug={service.slug}
+                                            className="size-12"
+                                            iconClassName="size-6"
+                                        />
+                                        <div className="mt-4 min-w-0">
+                                            <p className="line-clamp-2 text-sm font-semibold leading-tight text-gray-950">
+                                                {service.title}
+                                            </p>
+                                            <p className="mt-1 line-clamp-2 text-xs leading-5 text-gray-500">
+                                                {service.subtitle}
+                                            </p>
+                                        </div>
+                                    </Link>
+                                )
+                            })}
                     </div>
                 </section>
 

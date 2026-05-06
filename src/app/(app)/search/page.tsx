@@ -18,6 +18,10 @@ import {
     normalizeAssetSrc,
     toFiniteNumber,
 } from '@/lib/utils'
+import {
+    isServiceBookable,
+    serviceAvailabilityLabel,
+} from '@/lib/service-catalog'
 import { FiSearch, FiStar, FiChevronRight, FiX, FiClock } from 'react-icons/fi'
 
 type SearchCategory = 'all' | 'services' | 'providers' | 'articles'
@@ -264,30 +268,61 @@ export default function SearchPage() {
                                     Services
                                 </h3>
                                 <div className="space-y-3">
-                                    {results.services.map(service => (
-                                        <Link
-                                            key={service.id}
-                                            href={`/services/${service.slug}`}
-                                            className="surface-card surface-card-hover flex items-center gap-3 p-3"
-                                        >
-                                            <ServiceVisual
-                                                slug={service.slug}
-                                                className="size-14 flex-shrink-0 rounded-xl"
-                                                iconClassName="size-7"
-                                            />
-                                            <div className="flex-1 min-w-0">
-                                                <h4 className="font-medium text-gray-900 truncate">
-                                                    {service.title}
-                                                </h4>
-                                                <p className="text-sm text-gray-500 truncate">
-                                                    {service.subtitle}
-                                                </p>
-                                            </div>
-                                            <ServiceChevron
-                                                slug={service.slug}
-                                            />
-                                        </Link>
-                                    ))}
+                                    {results.services.map(service => {
+                                        const bookable = isServiceBookable(
+                                            service.slug,
+                                        )
+                                        const content = (
+                                            <>
+                                                <ServiceVisual
+                                                    slug={service.slug}
+                                                    className="size-14 flex-shrink-0 rounded-xl"
+                                                    iconClassName="size-7"
+                                                />
+                                                <div className="flex-1 min-w-0">
+                                                    <h4 className="font-medium text-gray-900 truncate">
+                                                        {service.title}
+                                                    </h4>
+                                                    <p className="text-sm text-gray-500 truncate">
+                                                        {service.subtitle}
+                                                    </p>
+                                                    <span className="mt-1 inline-flex rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-semibold text-gray-600">
+                                                        {serviceAvailabilityLabel(
+                                                            service.slug,
+                                                        )}
+                                                    </span>
+                                                </div>
+                                                {bookable && (
+                                                    <ServiceChevron
+                                                        slug={service.slug}
+                                                    />
+                                                )}
+                                            </>
+                                        )
+
+                                        return bookable ? (
+                                            <Link
+                                                key={service.id}
+                                                href={`/services/${service.slug}`}
+                                                className="surface-card surface-card-hover flex items-center gap-3 p-3"
+                                            >
+                                                {content}
+                                            </Link>
+                                        ) : (
+                                            <button
+                                                key={service.id}
+                                                type="button"
+                                                onClick={() =>
+                                                    toast.info(
+                                                        `${service.title} is available by request`,
+                                                    )
+                                                }
+                                                className="surface-card flex w-full items-center gap-3 p-3 text-left opacity-85"
+                                            >
+                                                {content}
+                                            </button>
+                                        )
+                                    })}
                                 </div>
                             </section>
                         )}

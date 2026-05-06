@@ -9,10 +9,12 @@ import { servicesApi } from '@/lib/api/client'
 import { Service, Provider } from '@/types'
 import {
     formatCurrency,
+    cn,
     getInitials,
     normalizeAssetSrc,
     toFiniteNumber,
 } from '@/lib/utils'
+import { isServiceBookable } from '@/lib/service-catalog'
 import { FiStar, FiClock, FiUsers, FiCheck } from 'react-icons/fi'
 
 export default function ServiceDetailPage() {
@@ -67,6 +69,8 @@ export default function ServiceDetailPage() {
         )
     }
 
+    const bookable = isServiceBookable(service.slug)
+
     return (
         <div>
             <PageHeader title={service.title} />
@@ -103,6 +107,14 @@ export default function ServiceDetailPage() {
                     </div>
 
                     <p className="text-gray-600 mb-4">{service.description}</p>
+
+                    {!bookable && (
+                        <div className="mb-4 rounded-2xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800">
+                            This specialized program is available by request.
+                            Booking will open once structured providers and
+                            sessions are ready.
+                        </div>
+                    )}
 
                     <div className="flex items-center gap-4 text-sm text-gray-500">
                         <span className="flex items-center gap-1">
@@ -144,7 +156,12 @@ export default function ServiceDetailPage() {
                         Available Providers
                     </h2>
                     <div className="space-y-3">
-                        {providers.length === 0 ? (
+                        {!bookable ? (
+                            <p className="text-gray-500 text-center py-4">
+                                Provider matching for this program is coming
+                                soon.
+                            </p>
+                        ) : providers.length === 0 ? (
                             <p className="text-gray-500 text-center py-4">
                                 No providers available
                             </p>
@@ -215,11 +232,20 @@ export default function ServiceDetailPage() {
                 {/* Book Now Button */}
                 <button
                     onClick={() =>
-                        router.push(`/book/${service.slug || service.id}`)
+                        bookable
+                            ? router.push(`/book/${service.slug || service.id}`)
+                            : toast.info(
+                                  `${service.title} is available by request`,
+                              )
                     }
-                    className="w-full py-4 bg-primary text-white rounded-2xl font-medium text-lg"
+                    className={cn(
+                        'w-full py-4 rounded-2xl font-medium text-lg',
+                        bookable
+                            ? 'bg-primary text-white'
+                            : 'bg-gray-200 text-gray-600',
+                    )}
                 >
-                    Book Now
+                    {bookable ? 'Book Now' : 'Request Access'}
                 </button>
             </main>
         </div>
