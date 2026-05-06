@@ -7,7 +7,13 @@ import { toast } from 'sonner'
 import { AppHeader } from '@/components/layout/app-header'
 import { searchApi } from '@/lib/api/client'
 import { Service, Provider, Article } from '@/types'
-import { formatCurrency, cn, getInitials } from '@/lib/utils'
+import {
+    formatCurrency,
+    cn,
+    getInitials,
+    normalizeAssetSrc,
+    toFiniteNumber,
+} from '@/lib/utils'
 import { FiSearch, FiStar, FiChevronRight, FiX, FiClock } from 'react-icons/fi'
 
 type SearchCategory = 'all' | 'services' | 'providers' | 'articles'
@@ -132,7 +138,7 @@ export default function SearchPage() {
         (showArticles ? results.articles.length : 0)
 
     return (
-        <div className="min-h-screen bg-gray-50 pb-24">
+        <div className="min-h-screen app-shell-bg pb-24">
             <AppHeader title="Search" showGreeting={false} />
 
             <main className="app-page-container-tight">
@@ -225,7 +231,7 @@ export default function SearchPage() {
                         {[1, 2, 3].map(i => (
                             <div
                                 key={i}
-                                className="bg-white rounded-2xl p-4 animate-pulse"
+                                className="surface-card p-4 animate-pulse"
                             >
                                 <div className="flex gap-4">
                                     <div className="w-16 h-16 bg-gray-200 rounded-xl" />
@@ -258,12 +264,18 @@ export default function SearchPage() {
                                         <Link
                                             key={service.id}
                                             href={`/services/${service.slug}`}
-                                            className="flex items-center gap-3 bg-white rounded-xl p-3 shadow-sm hover:shadow-md transition-shadow"
+                                            className="surface-card surface-card-hover flex items-center gap-3 p-3"
                                         >
                                             <div className="relative w-14 h-14 rounded-lg bg-gray-200 overflow-hidden flex-shrink-0">
-                                                {service.image_path && (
+                                                {normalizeAssetSrc(
+                                                    service.image_path,
+                                                ) && (
                                                     <Image
-                                                        src={service.image_path}
+                                                        src={
+                                                            normalizeAssetSrc(
+                                                                service.image_path,
+                                                            ) as string
+                                                        }
                                                         alt={service.title}
                                                         fill
                                                         className="object-cover"
@@ -296,7 +308,7 @@ export default function SearchPage() {
                                         <Link
                                             key={provider.id}
                                             href={`/providers/${provider.id}`}
-                                            className="flex items-center gap-3 bg-white rounded-xl p-3 shadow-sm hover:shadow-md transition-shadow"
+                                            className="surface-card surface-card-hover flex items-center gap-3 p-3"
                                         >
                                             <div className="relative w-14 h-14 rounded-full bg-gray-200 overflow-hidden flex-shrink-0">
                                                 {provider.avatar ? (
@@ -328,9 +340,11 @@ export default function SearchPage() {
                                                 <div className="flex items-center gap-2 mt-1">
                                                     <span className="flex items-center gap-1 text-sm text-yellow-500">
                                                         <FiStar className="w-3.5 h-3.5 fill-current" />
-                                                        {provider.rating?.toFixed(
-                                                            1,
-                                                        ) || 'New'}
+                                                        {provider.rating
+                                                            ? toFiniteNumber(
+                                                                  provider.rating,
+                                                              ).toFixed(1)
+                                                            : 'New'}
                                                     </span>
                                                     <span className="text-xs text-gray-400">
                                                         •{' '}
@@ -359,13 +373,17 @@ export default function SearchPage() {
                                         <Link
                                             key={article.id}
                                             href={`/articles/${article.slug}`}
-                                            className="flex items-center gap-3 bg-white rounded-xl p-3 shadow-sm hover:shadow-md transition-shadow"
+                                            className="surface-card surface-card-hover flex items-center gap-3 p-3"
                                         >
                                             <div className="relative w-14 h-14 rounded-lg bg-gray-200 overflow-hidden flex-shrink-0">
-                                                {article.featured_image && (
+                                                {normalizeAssetSrc(
+                                                    article.featured_image,
+                                                ) && (
                                                     <Image
                                                         src={
-                                                            article.featured_image
+                                                            normalizeAssetSrc(
+                                                                article.featured_image,
+                                                            ) as string
                                                         }
                                                         alt={article.title}
                                                         fill

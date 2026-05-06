@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { cn, calculateBMI, getBMICategory } from '@/lib/utils'
+import { cn, calculateBMI, getBMICategory, toFiniteNumber } from '@/lib/utils'
 import { useWellnessStore } from '@/lib/stores/wellness-store'
 import { wellnessApi } from '@/lib/api/client'
 import { toast } from 'sonner'
@@ -134,7 +134,7 @@ export default function PhysicalWellnessPage() {
         }))
 
     return (
-        <div className="min-h-screen bg-gray-50 pb-24">
+        <div className="min-h-screen app-shell-bg pb-24">
             <AppHeader
                 title="Physical Wellness"
                 showBack
@@ -160,7 +160,7 @@ export default function PhysicalWellnessPage() {
                 </section>
 
                 {/* BMI Card */}
-                <section className="rounded-xl bg-white p-4 shadow-sm">
+                <section className="surface-card p-4">
                     <div className="mb-3 flex items-center justify-between">
                         <h2 className="text-sm font-medium text-gray-700">
                             BMI Tracker
@@ -229,15 +229,21 @@ export default function PhysicalWellnessPage() {
                     ) : metrics.bmi ? (
                         <div className="text-center">
                             <p className="text-4xl font-bold text-gray-900">
-                                {metrics.bmi.value.toFixed(1)}
+                                {toFiniteNumber(metrics.bmi.value).toFixed(1)}
                             </p>
                             <p
                                 className={cn(
                                     'text-sm font-medium',
-                                    getBMICategory(metrics.bmi.value)?.color,
+                                    getBMICategory(
+                                        toFiniteNumber(metrics.bmi.value),
+                                    )?.color,
                                 )}
                             >
-                                {getBMICategory(metrics.bmi.value)?.label}
+                                {
+                                    getBMICategory(
+                                        toFiniteNumber(metrics.bmi.value),
+                                    )?.label
+                                }
                             </p>
                             <div className="mt-2 flex justify-center gap-4 text-xs text-gray-500">
                                 {metrics.height && (
@@ -270,7 +276,7 @@ export default function PhysicalWellnessPage() {
                 </section>
 
                 {/* Step Tracking */}
-                <section className="rounded-xl bg-white p-4 shadow-sm">
+                <section className="surface-card p-4">
                     <h2 className="mb-3 text-sm font-medium text-gray-700">
                         Step Tracking
                     </h2>
@@ -355,7 +361,7 @@ export default function PhysicalWellnessPage() {
                     </div>
 
                     {physicalGoals.length === 0 ? (
-                        <div className="rounded-xl bg-white p-4 text-center shadow-sm">
+                        <div className="surface-card p-4 text-center">
                             <FiTarget className="mx-auto mb-2 h-8 w-8 text-gray-300" />
                             <p className="text-sm text-gray-500">
                                 No physical goals yet

@@ -7,7 +7,7 @@ import { toast } from 'sonner'
 import { AppHeader } from '@/components/layout/app-header'
 import { servicesApi } from '@/lib/api/client'
 import { Service } from '@/types'
-import { cn } from '@/lib/utils'
+import { cn, normalizeAssetSrc } from '@/lib/utils'
 import { FiChevronRight } from 'react-icons/fi'
 
 export default function ServicesPage() {
@@ -58,10 +58,10 @@ export default function ServicesPage() {
                             key={category.value ?? 'all'}
                             onClick={() => setSelectedCategory(category.value)}
                             className={cn(
-                                'px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors',
+                                'app-tab whitespace-nowrap',
                                 selectedCategory === category.value
-                                    ? 'bg-primary text-white'
-                                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200',
+                                    ? 'app-tab-active'
+                                    : 'app-tab-inactive',
                             )}
                         >
                             {category.label}
@@ -75,7 +75,7 @@ export default function ServicesPage() {
                         {[1, 2, 3].map(i => (
                             <div
                                 key={i}
-                                className="bg-white rounded-2xl p-4 animate-pulse"
+                                className="surface-card p-4 animate-pulse"
                             >
                                 <div className="flex gap-4">
                                     <div className="w-24 h-24 bg-gray-200 rounded-xl" />
@@ -94,13 +94,19 @@ export default function ServicesPage() {
                             <Link
                                 key={service.id}
                                 href={`/services/${service.slug}`}
-                                className="block bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow"
+                                className="surface-card surface-card-hover block overflow-hidden"
                             >
                                 <div className="flex">
                                     <div className="relative w-28 h-28 bg-gray-200 flex-shrink-0">
-                                        {service.image_path && (
+                                        {normalizeAssetSrc(
+                                            service.image_path,
+                                        ) && (
                                             <Image
-                                                src={service.image_path}
+                                                src={
+                                                    normalizeAssetSrc(
+                                                        service.image_path,
+                                                    ) as string
+                                                }
                                                 alt={service.title}
                                                 fill
                                                 className="object-cover"
@@ -119,7 +125,7 @@ export default function ServicesPage() {
                                         <div className="flex items-center justify-between mt-2">
                                             {service.providers_count !==
                                                 undefined && (
-                                                <span className="text-xs text-gray-500">
+                                                <span className="app-chip bg-gray-100 text-gray-600">
                                                     {service.providers_count}{' '}
                                                     provider
                                                     {service.providers_count !==
