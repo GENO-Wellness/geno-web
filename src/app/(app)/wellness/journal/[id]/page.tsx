@@ -112,7 +112,7 @@ export default function JournalEntryDetailPage() {
                     showBack
                     onBack={() => router.push('/wellness/journal')}
                 />
-                <main className="p-4">
+                <main className="app-page-container-tight">
                     <div className="animate-pulse space-y-4">
                         <div className="h-8 w-48 rounded bg-gray-200" />
                         <div className="h-32 rounded-xl bg-gray-200" />
@@ -137,7 +137,7 @@ export default function JournalEntryDetailPage() {
                 }
             />
 
-            <main className="p-4">
+            <main className="app-page-container-tight">
                 {isEditing ? (
                     <div className="rounded-xl bg-white p-4 shadow-sm">
                         <JournalEntryForm

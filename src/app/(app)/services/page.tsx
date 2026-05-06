@@ -50,7 +50,7 @@ export default function ServicesPage() {
         <div>
             <AppHeader title="Services" showGreeting={false} />
 
-            <main className="px-4 py-6">
+            <main className="app-page-container">
                 {/* Category Filter */}
                 <div className="flex gap-2 overflow-x-auto pb-4 -mx-4 px-4 scrollbar-hide">
                     {categories.map(category => (

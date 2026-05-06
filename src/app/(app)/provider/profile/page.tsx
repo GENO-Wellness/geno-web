@@ -103,7 +103,7 @@ export default function ProviderProfilePage() {
                 onBack={() => router.back()}
             />
 
-            <main className="px-4 py-6">
+            <main className="app-page-container">
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="bg-white rounded-2xl p-6 shadow-sm space-y-6">
                         {/* Bio */}

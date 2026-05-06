@@ -50,7 +50,7 @@ export default function MoodPage() {
                 onBack={() => router.push('/wellness')}
             />
 
-            <main className="p-4 space-y-4">
+            <main className="app-page-container-tight space-y-4">
                 {/* Daily Check-in */}
                 <section>
                     <h2 className="mb-2 text-sm font-medium text-gray-700">

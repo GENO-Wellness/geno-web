@@ -123,7 +123,7 @@ export default function BookingDetailPage() {
         return (
             <div>
                 <PageHeader title="Booking Details" />
-                <div className="px-4 py-6 space-y-4 animate-pulse">
+                <div className="app-page-container space-y-4 animate-pulse">
                     <div className="h-32 bg-gray-200 rounded-2xl" />
                     <div className="h-24 bg-gray-200 rounded-2xl" />
                     <div className="h-24 bg-gray-200 rounded-2xl" />
@@ -136,7 +136,7 @@ export default function BookingDetailPage() {
         return (
             <div>
                 <PageHeader title="Booking Details" />
-                <div className="px-4 py-12 text-center">
+                <div className="mx-auto w-full max-w-4xl px-4 py-12 text-center">
                     <FiAlertCircle className="w-12 h-12 text-gray-300 mx-auto mb-4" />
                     <p className="text-gray-500 mb-4">Booking not found</p>
                     <Link
@@ -154,7 +154,7 @@ export default function BookingDetailPage() {
         <div className="min-h-screen bg-gray-50 pb-24">
             <PageHeader title="Booking Details" />
 
-            <main className="px-4 py-6 space-y-6">
+            <main className="app-page-container space-y-6">
                 {/* Status Card */}
                 <section className="bg-white rounded-2xl p-4 shadow-sm">
                     <div className="flex items-start justify-between mb-4">

@@ -136,7 +136,7 @@ export default function AnalyticsPage() {
                 onBack={() => router.back()}
             />
 
-            <main className="px-4 py-6 space-y-6">
+            <main className="app-page-container space-y-6">
                 {/* Key Metrics */}
                 {error && (
                     <div className="bg-red-50 text-red-600 p-4 rounded-xl text-center">

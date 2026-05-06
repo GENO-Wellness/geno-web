@@ -64,7 +64,7 @@ export default function MessagesPage() {
         <div className="min-h-screen bg-gray-50 pb-24">
             <AppHeader title="Messages" />
 
-            <main className="p-4 space-y-3">
+            <main className="app-page-container-tight space-y-3">
                 {/* Search */}
                 <div className="relative">
                     <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />

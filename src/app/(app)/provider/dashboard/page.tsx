@@ -64,7 +64,7 @@ export default function ProviderDashboardPage() {
         <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,#eef2ff_0,#f8fafc_36%,#f9fafb_100%)] pb-24">
             <PageHeader title="Dashboard" />
 
-            <main className="px-4 py-6 space-y-6">
+            <main className="app-page-container space-y-6">
                 {/* Stats Grid */}
                 <div className="grid grid-cols-2 gap-4">
                     <div className="surface-card surface-card-hover p-4">

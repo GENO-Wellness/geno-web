@@ -66,7 +66,7 @@ export default function ProviderProfilePage() {
         return (
             <div className="min-h-screen bg-gray-50">
                 <PageHeader title="Provider" />
-                <div className="px-4 py-6 space-y-4">
+                <div className="app-page-container space-y-4">
                     <div className="flex items-center gap-4">
                         <div className="w-20 h-20 bg-gray-200 rounded-full animate-pulse" />
                         <div className="flex-1 space-y-2">
@@ -84,7 +84,7 @@ export default function ProviderProfilePage() {
         return (
             <div className="min-h-screen bg-gray-50">
                 <PageHeader title="Provider" />
-                <div className="px-4 py-12 text-center">
+                <div className="mx-auto w-full max-w-4xl px-4 py-12 text-center">
                     <p className="text-gray-500">Provider not found</p>
                 </div>
             </div>
@@ -95,7 +95,7 @@ export default function ProviderProfilePage() {
         <div className="min-h-screen bg-gray-50 pb-24">
             <PageHeader title={provider.name || 'Provider'} />
 
-            <main className="px-4 py-6 space-y-6">
+            <main className="app-page-container space-y-6">
                 {/* Provider Header */}
                 <section className="bg-white rounded-2xl p-4 shadow-sm">
                     <div className="flex items-start gap-4">

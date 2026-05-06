@@ -124,7 +124,7 @@ export default function WellnessPage() {
         <div className="min-h-screen bg-gray-50 pb-24">
             <AppHeader title="Wellness" showGreeting={false} />
 
-            <main className="px-4 py-4 space-y-4">
+            <main className="app-page-container-tight space-y-4">
                 {/* Stats Row */}
                 <section className="grid grid-cols-2 gap-3">
                     <PointsDisplay stats={wellnessStats} variant="default" />

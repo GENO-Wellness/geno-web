@@ -119,3 +119,11 @@ h1, h2, h3, h4, h5, h6 {
 @utility metric-icon {
   @apply flex size-11 items-center justify-center rounded-2xl ring-1 ring-black/[0.04];
 }
+
+@utility app-page-container {
+  @apply mx-auto w-full max-w-4xl px-4 py-6;
+}
+
+@utility app-page-container-tight {
+  @apply mx-auto w-full max-w-4xl p-4;
+}

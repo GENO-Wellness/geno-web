@@ -149,7 +149,7 @@ export default function SessionsPage() {
         <div>
             <AppHeader title="Sessions" showGreeting={false} />
 
-            <main className="px-4 py-6">
+            <main className="app-page-container">
                 {/* Tabs */}
                 <div className="flex gap-2 mb-6">
                     {tabs.map(tab => (

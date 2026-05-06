@@ -121,7 +121,7 @@ export default function ProfilePage() {
         <div>
             <AppHeader title="Profile" showGreeting={false} />
 
-            <main className="px-4 py-6 space-y-6">
+            <main className="app-page-container space-y-6">
                 {/* Profile Header */}
                 <section className="bg-white rounded-2xl p-6 shadow-sm text-center">
                     <div className="flex justify-center mb-4">

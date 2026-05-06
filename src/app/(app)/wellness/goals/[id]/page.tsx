@@ -99,7 +99,7 @@ export default function GoalDetailPage() {
                     showBack
                     onBack={() => router.push('/wellness/goals')}
                 />
-                <main className="p-4">
+                <main className="app-page-container-tight">
                     <div className="animate-pulse space-y-4">
                         <div className="h-8 w-48 rounded bg-gray-200" />
                         <div className="h-32 rounded-xl bg-gray-200" />
@@ -123,7 +123,7 @@ export default function GoalDetailPage() {
                 onBack={() => router.push('/wellness/goals')}
             />
 
-            <main className="p-4 space-y-4">
+            <main className="app-page-container-tight space-y-4">
                 {/* Goal Header */}
                 <section className="rounded-xl bg-white p-4 shadow-sm">
                     <div className="mb-3 flex items-center gap-2">
