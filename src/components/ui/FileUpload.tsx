@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useCallback, useState } from 'react'
+import Image from 'next/image'
 import { useDropzone, FileRejection, DropzoneOptions } from 'react-dropzone'
 import { UploadCloud, X, File, AlertCircle, CheckCircle2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -47,21 +48,23 @@ export function FileUpload({
     React.useEffect(() => {
         if (value === undefined) return
 
-        if (preview && preview.startsWith('blob:')) {
-            URL.revokeObjectURL(preview)
-        }
-
+        let nextPreview: string | null = null
         if (value === null) {
-            setPreview(null)
             setFileName(null)
         } else if (typeof value === 'string') {
-            setPreview(value)
+            nextPreview = value
             setFileName('Uploaded File')
         } else {
-            const objectUrl = URL.createObjectURL(value)
-            setPreview(objectUrl)
+            nextPreview = URL.createObjectURL(value)
             setFileName(value.name)
         }
+
+        setPreview(current => {
+            if (current && current.startsWith('blob:')) {
+                URL.revokeObjectURL(current)
+            }
+            return nextPreview
+        })
     }, [value])
 
     // Cleanup on unmount
@@ -96,9 +99,19 @@ export function FileUpload({
 
                 if (file.type.startsWith('image/')) {
                     const objectUrl = URL.createObjectURL(file)
-                    setPreview(objectUrl)
+                    setPreview(current => {
+                        if (current && current.startsWith('blob:')) {
+                            URL.revokeObjectURL(current)
+                        }
+                        return objectUrl
+                    })
                 } else {
-                    setPreview(null)
+                    setPreview(current => {
+                        if (current && current.startsWith('blob:')) {
+                            URL.revokeObjectURL(current)
+                        }
+                        return null
+                    })
                 }
             }
         },
@@ -116,7 +129,12 @@ export function FileUpload({
     const handleRemove = (e: React.MouseEvent) => {
         e.stopPropagation()
         onFileSelect(null)
-        setPreview(null)
+        setPreview(current => {
+            if (current && current.startsWith('blob:')) {
+                URL.revokeObjectURL(current)
+            }
+            return null
+        })
         setFileName(null)
         setInternalError(null)
     }
@@ -152,10 +170,13 @@ export function FileUpload({
                     <div className="relative w-full flex items-center gap-4">
                         {preview ? (
                             <div className="relative w-16 h-16 rounded-2xl overflow-hidden shrink-0 border border-black/[0.06]">
-                                <img
+                                <Image
                                     src={preview}
                                     alt="Preview"
-                                    className="w-full h-full object-cover"
+                                    width={64}
+                                    height={64}
+                                    unoptimized
+                                    className="h-full w-full object-cover"
                                 />
                             </div>
                         ) : (
