@@ -25,12 +25,19 @@ export function VideoRoom({
 
     const [hasJoined, setHasJoined] = React.useState(false)
     const [showNotes, setShowNotes] = React.useState(false)
+    const leaveCalledRef = React.useRef(false)
+
+    const notifyLeave = React.useCallback(async () => {
+        if (leaveCalledRef.current) return
+        leaveCalledRef.current = true
+        await onLeave?.()
+    }, [onLeave])
 
     // Ensure we disconnect when component unmounts
     useEffect(() => {
         return () => {
             disconnect().finally(() => {
-                void onLeave?.()
+                void notifyLeave()
             })
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -130,7 +137,7 @@ export function VideoRoom({
                 <VideoControls
                     showNotes={showNotes}
                     onToggleNotes={() => setShowNotes(!showNotes)}
-                    onLeave={onLeave}
+                    onLeave={notifyLeave}
                 />
             </div>
         </div>
