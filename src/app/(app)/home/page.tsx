@@ -5,6 +5,10 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { toast } from 'sonner'
 import { AppHeader } from '@/components/layout/app-header'
+import {
+    getServiceTone,
+    ServiceVisual,
+} from '@/components/services/service-visual'
 import { useAuthStore } from '@/lib/stores/auth-store'
 import { useWellnessStore } from '@/lib/stores/wellness-store'
 import { contentApi, servicesApi } from '@/lib/api/client'
@@ -67,22 +71,6 @@ const moods = [
     { id: 'anxious', emoji: '😟' },
     { id: 'tired', emoji: '😴' },
 ]
-
-// Map service slugs to local images
-const serviceImages: Record<string, string> = {
-    counselling: '/images/services/counseling.jpg',
-    coaching: '/images/services/coaching.jpg',
-    training: '/images/services/exercise.jpg',
-    mentorship: '/images/services/mentorship.jpg',
-    consultation: '/images/services/consultation.jpg',
-    other: '/images/services/diary.jpg',
-    'mental-wellness': '/images/services/practice.jpg',
-    medical: '/images/services/exercise.jpg',
-    'financial-wellness': '/images/services/finance.jpg',
-    'social-wellness': '/images/services/community.jpg',
-    'work-life': '/images/services/work.jpg',
-    purpose: '/images/services/spiritual.jpg',
-}
 
 export default function HomePage() {
     const { user } = useAuthStore()
@@ -268,31 +256,27 @@ export default function HomePage() {
                     </div>
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                         {services.slice(0, 4).map(service => {
-                            const imageSrc =
-                                serviceImages[service.slug] ||
-                                normalizeAssetSrc(service.image_path)
+                            const tone = getServiceTone(service.slug)
 
                             return (
                                 <Link
                                     key={service.id}
                                     href={`/services/${service.slug}`}
-                                    className="surface-card surface-card-hover overflow-hidden"
+                                    className={cn(
+                                        'surface-card surface-card-hover flex min-h-40 flex-col p-4 shadow-lg',
+                                        tone.shadow,
+                                    )}
                                 >
-                                    <div className="relative h-28 sm:h-32 bg-gray-200">
-                                        {imageSrc && (
-                                            <Image
-                                                src={imageSrc}
-                                                alt={service.title}
-                                                fill
-                                                className="object-cover"
-                                            />
-                                        )}
-                                    </div>
-                                    <div className="p-3">
-                                        <p className="font-medium text-gray-900 text-sm line-clamp-1">
+                                    <ServiceVisual
+                                        slug={service.slug}
+                                        className="size-12"
+                                        iconClassName="size-6"
+                                    />
+                                    <div className="mt-4 min-w-0">
+                                        <p className="line-clamp-2 text-sm font-semibold leading-tight text-gray-950">
                                             {service.title}
                                         </p>
-                                        <p className="text-xs text-gray-500 mt-1 line-clamp-2">
+                                        <p className="mt-1 line-clamp-2 text-xs leading-5 text-gray-500">
                                             {service.subtitle}
                                         </p>
                                     </div>

@@ -2,13 +2,16 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
 import { toast } from 'sonner'
 import { AppHeader } from '@/components/layout/app-header'
+import {
+    getServiceTone,
+    ServiceChevron,
+    ServiceVisual,
+} from '@/components/services/service-visual'
 import { servicesApi } from '@/lib/api/client'
 import { Service } from '@/types'
-import { cn, normalizeAssetSrc } from '@/lib/utils'
-import { FiChevronRight } from 'react-icons/fi'
+import { cn } from '@/lib/utils'
 
 export default function ServicesPage() {
     const [services, setServices] = useState<Service[]>([])
@@ -44,6 +47,7 @@ export default function ServicesPage() {
         { value: 'training', label: 'Training' },
         { value: 'mentorship', label: 'Mentorship' },
         { value: 'consultation', label: 'Consultation' },
+        { value: 'other', label: 'Others' },
     ]
 
     return (
@@ -71,75 +75,64 @@ export default function ServicesPage() {
 
                 {/* Services List */}
                 {isLoading ? (
-                    <div className="space-y-4">
-                        {[1, 2, 3].map(i => (
+                    <div className="grid grid-cols-2 gap-4">
+                        {[1, 2, 3, 4, 5, 6].map(i => (
                             <div
                                 key={i}
-                                className="surface-card p-4 animate-pulse"
+                                className="surface-card min-h-44 p-4 animate-pulse"
                             >
-                                <div className="flex gap-4">
-                                    <div className="w-24 h-24 bg-gray-200 rounded-xl" />
-                                    <div className="flex-1 space-y-2">
-                                        <div className="h-5 bg-gray-200 rounded w-2/3" />
-                                        <div className="h-4 bg-gray-200 rounded w-full" />
-                                        <div className="h-4 bg-gray-200 rounded w-1/2" />
-                                    </div>
+                                <div className="size-12 rounded-2xl bg-gray-200" />
+                                <div className="mt-4 space-y-2">
+                                    <div className="h-5 bg-gray-200 rounded w-3/4" />
+                                    <div className="h-4 bg-gray-200 rounded w-full" />
+                                    <div className="h-4 bg-gray-200 rounded w-2/3" />
                                 </div>
                             </div>
                         ))}
                     </div>
                 ) : (
-                    <div className="space-y-4">
-                        {services.map(service => (
-                            <Link
-                                key={service.id}
-                                href={`/services/${service.slug}`}
-                                className="surface-card surface-card-hover block overflow-hidden"
-                            >
-                                <div className="flex">
-                                    <div className="relative w-28 h-28 bg-gray-200 flex-shrink-0">
-                                        {normalizeAssetSrc(
-                                            service.image_path,
-                                        ) && (
-                                            <Image
-                                                src={
-                                                    normalizeAssetSrc(
-                                                        service.image_path,
-                                                    ) as string
-                                                }
-                                                alt={service.title}
-                                                fill
-                                                className="object-cover"
-                                            />
+                    <div className="grid grid-cols-2 gap-4">
+                        {services.map(service => {
+                            const tone = getServiceTone(service.slug)
+
+                            return (
+                                <Link
+                                    key={service.id}
+                                    href={`/services/${service.slug}`}
+                                    className={cn(
+                                        'surface-card surface-card-hover flex min-h-44 flex-col p-4 shadow-lg',
+                                        tone.shadow,
+                                    )}
+                                >
+                                    <ServiceVisual
+                                        slug={service.slug}
+                                        className="size-12"
+                                        iconClassName="size-6"
+                                    />
+                                    <div className="mt-4 min-w-0 flex-1">
+                                        <h3 className="line-clamp-2 text-[15px] font-semibold leading-tight text-gray-950">
+                                            {service.title}
+                                        </h3>
+                                        <p className="mt-1 line-clamp-2 text-xs leading-5 text-gray-500">
+                                            {service.subtitle}
+                                        </p>
+                                    </div>
+                                    <div className="mt-3 flex items-center justify-between gap-2">
+                                        {service.providers_count !==
+                                            undefined && (
+                                            <span className="app-chip bg-gray-100 text-gray-600">
+                                                {service.providers_count}{' '}
+                                                provider
+                                                {service.providers_count !== 1
+                                                    ? 's'
+                                                    : ''}
+                                            </span>
                                         )}
+                                        <ServiceChevron slug={service.slug} />
                                     </div>
-                                    <div className="flex-1 p-4 flex flex-col justify-between">
-                                        <div>
-                                            <h3 className="font-semibold text-gray-900">
-                                                {service.title}
-                                            </h3>
-                                            <p className="text-sm text-gray-500 mt-1 line-clamp-2">
-                                                {service.subtitle}
-                                            </p>
-                                        </div>
-                                        <div className="flex items-center justify-between mt-2">
-                                            {service.providers_count !==
-                                                undefined && (
-                                                <span className="app-chip bg-gray-100 text-gray-600">
-                                                    {service.providers_count}{' '}
-                                                    provider
-                                                    {service.providers_count !==
-                                                    1
-                                                        ? 's'
-                                                        : ''}
-                                                </span>
-                                            )}
-                                            <FiChevronRight className="w-5 h-5 text-gray-400" />
-                                        </div>
-                                    </div>
-                                </div>
-                            </Link>
-                        ))}
+                                </Link>
+                            )
+                        })}
                     </div>
                 )}
 

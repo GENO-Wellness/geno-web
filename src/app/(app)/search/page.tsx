@@ -5,6 +5,10 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { toast } from 'sonner'
 import { AppHeader } from '@/components/layout/app-header'
+import {
+    ServiceChevron,
+    ServiceVisual,
+} from '@/components/services/service-visual'
 import { searchApi } from '@/lib/api/client'
 import { Service, Provider, Article } from '@/types'
 import {
@@ -266,22 +270,11 @@ export default function SearchPage() {
                                             href={`/services/${service.slug}`}
                                             className="surface-card surface-card-hover flex items-center gap-3 p-3"
                                         >
-                                            <div className="relative w-14 h-14 rounded-lg bg-gray-200 overflow-hidden flex-shrink-0">
-                                                {normalizeAssetSrc(
-                                                    service.image_path,
-                                                ) && (
-                                                    <Image
-                                                        src={
-                                                            normalizeAssetSrc(
-                                                                service.image_path,
-                                                            ) as string
-                                                        }
-                                                        alt={service.title}
-                                                        fill
-                                                        className="object-cover"
-                                                    />
-                                                )}
-                                            </div>
+                                            <ServiceVisual
+                                                slug={service.slug}
+                                                className="size-14 flex-shrink-0 rounded-xl"
+                                                iconClassName="size-7"
+                                            />
                                             <div className="flex-1 min-w-0">
                                                 <h4 className="font-medium text-gray-900 truncate">
                                                     {service.title}
@@ -290,7 +283,9 @@ export default function SearchPage() {
                                                     {service.subtitle}
                                                 </p>
                                             </div>
-                                            <FiChevronRight className="w-5 h-5 text-gray-400 flex-shrink-0" />
+                                            <ServiceChevron
+                                                slug={service.slug}
+                                            />
                                         </Link>
                                     ))}
                                 </div>
