@@ -147,7 +147,7 @@ export default function AvailabilityPage() {
                 onBack={() => router.back()}
             />
 
-            <main className="px-4 py-6">
+            <main className="app-page-container">
                 <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
                     <div className="p-6 border-b border-gray-100">
                         <div className="flex items-center gap-2 text-gray-900">

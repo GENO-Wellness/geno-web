@@ -216,7 +216,7 @@ export default function SettingsPage() {
         <div className="bg-gray-50 min-h-screen pb-20">
             <AppHeader title="Settings" showBack={false} />
 
-            <main className="px-4 py-6">
+            <main className="app-page-container">
                 {/* Tabs */}
                 <div className="flex overflow-x-auto gap-2 mb-6 pb-2 scrollbar-hide">
                     {tabs.map(tab => (

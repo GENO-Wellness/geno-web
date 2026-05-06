@@ -41,7 +41,7 @@ export default function ServiceDetailPage() {
         return (
             <div>
                 <PageHeader title="Service Details" />
-                <div className="px-4 py-6 space-y-4">
+                <div className="app-page-container space-y-4">
                     <div className="h-48 bg-gray-200 rounded-2xl animate-pulse" />
                     <div className="h-8 bg-gray-200 rounded w-2/3 animate-pulse" />
                     <div className="h-4 bg-gray-200 rounded w-full animate-pulse" />
@@ -55,7 +55,7 @@ export default function ServiceDetailPage() {
         return (
             <div>
                 <PageHeader title="Service Details" />
-                <div className="px-4 py-12 text-center">
+                <div className="mx-auto w-full max-w-4xl px-4 py-12 text-center">
                     <p className="text-gray-500">Service not found</p>
                 </div>
             </div>
@@ -66,7 +66,7 @@ export default function ServiceDetailPage() {
         <div>
             <PageHeader title={service.title} />
 
-            <main className="px-4 py-6 space-y-6">
+            <main className="app-page-container space-y-6">
                 {/* Service Image */}
                 {service.image_path && (
                     <div className="relative rounded-2xl overflow-hidden h-48">

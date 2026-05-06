@@ -94,7 +94,7 @@ export default function JournalPage() {
                 }
             />
 
-            <main className="p-4 space-y-4">
+            <main className="app-page-container-tight space-y-4">
                 {/* Quick Stats */}
                 <section className="grid grid-cols-2 gap-3">
                     <div className="rounded-xl bg-white p-4 shadow-sm">

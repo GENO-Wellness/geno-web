@@ -88,7 +88,7 @@ export default function NotificationsPage() {
                 }
             />
 
-            <main className="px-4 py-6">
+            <main className="app-page-container">
                 {isLoading ? (
                     <div className="space-y-4">
                         {[1, 2, 3].map(i => (

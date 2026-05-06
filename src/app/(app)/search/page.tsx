@@ -135,7 +135,7 @@ export default function SearchPage() {
         <div className="min-h-screen bg-gray-50 pb-24">
             <AppHeader title="Search" showGreeting={false} />
 
-            <main className="px-4 py-4">
+            <main className="app-page-container-tight">
                 {/* Search Bar */}
                 <form onSubmit={handleSearch} className="relative mb-4">
                     <FiSearch

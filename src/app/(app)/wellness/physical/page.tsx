@@ -141,7 +141,7 @@ export default function PhysicalWellnessPage() {
                 onBack={() => router.push('/wellness')}
             />
 
-            <main className="p-4 space-y-4">
+            <main className="app-page-container-tight space-y-4">
                 {/* Hero Section */}
                 <section className="rounded-2xl bg-gradient-to-br from-green-500 to-emerald-600 p-6 text-white">
                     <div className="flex items-center gap-3 mb-3">

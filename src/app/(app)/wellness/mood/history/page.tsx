@@ -94,7 +94,7 @@ export default function MoodHistoryPage() {
                 onBack={() => router.push('/wellness/mood')}
             />
 
-            <main className="p-4 space-y-4">
+            <main className="app-page-container-tight space-y-4">
                 {/* Distribution Chart */}
                 {moodDistribution.length > 0 && (
                     <section className="rounded-xl bg-white p-4 shadow-sm">

@@ -202,7 +202,7 @@ export default function SessionDetailPage() {
         return (
             <div>
                 <PageHeader title="Session Details" />
-                <div className="px-4 py-6 space-y-4 animate-pulse">
+                <div className="app-page-container space-y-4 animate-pulse">
                     <div className="h-32 bg-gray-200 rounded-2xl" />
                     <div className="h-24 bg-gray-200 rounded-2xl" />
                     <div className="h-24 bg-gray-200 rounded-2xl" />
@@ -215,7 +215,7 @@ export default function SessionDetailPage() {
         return (
             <div>
                 <PageHeader title="Session Details" />
-                <div className="px-4 py-12 text-center">
+                <div className="mx-auto w-full max-w-4xl px-4 py-12 text-center">
                     <p className="text-gray-500">Session not found</p>
                 </div>
             </div>
@@ -227,7 +227,7 @@ export default function SessionDetailPage() {
             <div>
                 <PageHeader title="Session Details" />
 
-                <main className="px-4 py-6 space-y-6">
+                <main className="app-page-container space-y-6">
                     {activeVideo && session.meeting_url ? (
                         <section className="bg-white rounded-2xl p-4 shadow-sm">
                             <h2 className="text-xl font-bold text-gray-900 mb-4">

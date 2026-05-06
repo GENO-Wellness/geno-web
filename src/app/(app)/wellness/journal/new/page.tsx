@@ -23,7 +23,7 @@ export default function NewJournalEntryPage() {
                 onBack={() => router.back()}
             />
 
-            <main className="p-4">
+            <main className="app-page-container-tight">
                 <div className="rounded-xl bg-white p-4 shadow-sm">
                     <JournalEntryForm
                         onSuccess={handleSuccess}

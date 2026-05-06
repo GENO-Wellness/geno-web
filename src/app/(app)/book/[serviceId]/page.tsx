@@ -138,7 +138,7 @@ export default function BookingPage() {
         return (
             <div>
                 <PageHeader title="Book Service" />
-                <div className="px-4 py-6">
+                <div className="app-page-container">
                     <div className="animate-pulse space-y-4">
                         <div className="h-20 bg-gray-200 rounded-xl" />
                         <div className="h-20 bg-gray-200 rounded-xl" />
@@ -153,7 +153,7 @@ export default function BookingPage() {
         return (
             <div>
                 <PageHeader title="Book Service" />
-                <div className="px-4 py-12 text-center">
+                <div className="mx-auto w-full max-w-4xl px-4 py-12 text-center">
                     <p className="text-gray-500">Service not found</p>
                 </div>
             </div>
@@ -164,7 +164,7 @@ export default function BookingPage() {
         <div>
             <PageHeader title={`Book ${service.title}`} />
 
-            <main className="px-4 py-6 space-y-6">
+            <main className="app-page-container space-y-6">
                 {/* Progress Steps */}
                 <div className="flex items-center justify-between mb-6">
                     {(

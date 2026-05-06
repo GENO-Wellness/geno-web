@@ -121,7 +121,7 @@ export default function BookingsPage() {
         <div className="min-h-screen bg-gray-50 pb-24">
             <AppHeader title="My Bookings" showGreeting={false} />
 
-            <main className="px-4 py-6">
+            <main className="app-page-container">
                 {/* Tabs */}
                 <div className="flex gap-2 mb-6">
                     {tabs.map(tab => (
