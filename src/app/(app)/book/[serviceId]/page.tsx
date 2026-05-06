@@ -8,6 +8,7 @@ import { PageHeader } from '@/components/layout/page-header'
 import { servicesApi, bookingsApi } from '@/lib/api/client'
 import { Service, Provider, TimeSlot } from '@/types'
 import { formatCurrency, formatDate, cn, getInitials } from '@/lib/utils'
+import { isServiceBookable } from '@/lib/service-catalog'
 import { FiCalendar, FiClock, FiCheck } from 'react-icons/fi'
 
 type BookingStep = 'provider' | 'date' | 'time' | 'confirm'
@@ -40,6 +41,11 @@ export default function BookingPage() {
                 servicesApi.show(params.serviceId as string),
                 servicesApi.providers(params.serviceId as string),
             ])
+            if (!isServiceBookable(serviceRes.service.slug)) {
+                toast.info(`${serviceRes.service.title} is available by request`)
+                router.replace('/services')
+                return
+            }
             setService(serviceRes.service)
             setProviders(
                 toArray<Provider>(
@@ -54,7 +60,7 @@ export default function BookingPage() {
         } finally {
             setIsLoading(false)
         }
-    }, [params.serviceId])
+    }, [params.serviceId, router])
 
     const fetchAvailableSlots = useCallback(async () => {
         if (!selectedProvider) return

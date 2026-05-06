@@ -12,6 +12,11 @@ import {
 import { servicesApi } from '@/lib/api/client'
 import { Service } from '@/types'
 import { cn } from '@/lib/utils'
+import {
+    groupServices,
+    isServiceBookable,
+    serviceAvailabilityLabel,
+} from '@/lib/service-catalog'
 
 export default function ServicesPage() {
     const [services, setServices] = useState<Service[]>([])
@@ -23,8 +28,13 @@ export default function ServicesPage() {
     const fetchServices = useCallback(async () => {
         setIsLoading(true)
         try {
-            const params = selectedCategory
-                ? { category: selectedCategory }
+            const apiCategory =
+                selectedCategory === 'core' ||
+                selectedCategory === 'specialized'
+                    ? null
+                    : selectedCategory
+            const params = apiCategory
+                ? { category: apiCategory }
                 : undefined
             const response = await servicesApi.list(params)
             setServices(response.services as Service[])
@@ -42,13 +52,47 @@ export default function ServicesPage() {
 
     const categories = [
         { value: null, label: 'All' },
+        { value: 'core', label: 'Core Care' },
+        { value: 'specialized', label: 'Specialized' },
         { value: 'counselling', label: 'Counselling' },
         { value: 'coaching', label: 'Coaching' },
-        { value: 'training', label: 'Training' },
         { value: 'mentorship', label: 'Mentorship' },
-        { value: 'consultation', label: 'Consultation' },
-        { value: 'other', label: 'Others' },
     ]
+
+    const groupedServices = groupServices(services)
+    const displayedGroups =
+        selectedCategory === 'core'
+            ? [{ title: 'Core care', services: groupedServices.core }]
+            : selectedCategory === 'specialized'
+              ? [
+                    {
+                        title: 'Specialized programs',
+                        services: groupedServices.specialized,
+                    },
+                ]
+              : selectedCategory
+                ? [
+                      {
+                          title: 'Services',
+                          services: services.filter(
+                              service => service.slug === selectedCategory,
+                          ),
+                      },
+                  ]
+                : [
+                      { title: 'Core care', services: groupedServices.core },
+                      {
+                          title: 'Specialized programs',
+                          services: groupedServices.specialized,
+                      },
+                  ]
+
+    const handleUnavailableService = (title: string) => {
+        toast.info(`${title} is available by request`, {
+            description:
+                'We are preparing structured programs for this service. Please check back soon.',
+        })
+    }
 
     return (
         <div>
@@ -91,48 +135,112 @@ export default function ServicesPage() {
                         ))}
                     </div>
                 ) : (
-                    <div className="grid grid-cols-2 gap-4">
-                        {services.map(service => {
-                            const tone = getServiceTone(service.slug)
+                    <div className="space-y-6">
+                        {displayedGroups.map(group =>
+                            group.services.length > 0 ? (
+                                <section key={group.title}>
+                                    <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-gray-500">
+                                        {group.title}
+                                    </h2>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        {group.services.map(service => {
+                                            const tone = getServiceTone(
+                                                service.slug,
+                                            )
+                                            const bookable = isServiceBookable(
+                                                service.slug,
+                                            )
+                                            const card = (
+                                                <>
+                                                    <div className="flex items-start justify-between gap-2">
+                                                        <ServiceVisual
+                                                            slug={service.slug}
+                                                            className="size-12"
+                                                            iconClassName="size-6"
+                                                        />
+                                                        <span
+                                                            className={cn(
+                                                                'rounded-full px-2 py-1 text-[10px] font-semibold',
+                                                                bookable
+                                                                    ? 'bg-green-50 text-green-700'
+                                                                    : 'bg-amber-50 text-amber-700',
+                                                            )}
+                                                        >
+                                                            {serviceAvailabilityLabel(
+                                                                service.slug,
+                                                            )}
+                                                        </span>
+                                                    </div>
+                                                    <div className="mt-4 min-w-0 flex-1">
+                                                        <h3 className="line-clamp-2 text-[15px] font-semibold leading-tight text-gray-950">
+                                                            {service.title}
+                                                        </h3>
+                                                        <p className="mt-1 line-clamp-2 text-xs leading-5 text-gray-500">
+                                                            {service.subtitle}
+                                                        </p>
+                                                    </div>
+                                                    <div className="mt-3 flex items-center justify-between gap-2">
+                                                        {service.providers_count !==
+                                                            undefined && (
+                                                            <span className="app-chip bg-gray-100 text-gray-600">
+                                                                {
+                                                                    service.providers_count
+                                                                }{' '}
+                                                                provider
+                                                                {service.providers_count !==
+                                                                1
+                                                                    ? 's'
+                                                                    : ''}
+                                                            </span>
+                                                        )}
+                                                        {bookable && (
+                                                            <ServiceChevron
+                                                                slug={
+                                                                    service.slug
+                                                                }
+                                                            />
+                                                        )}
+                                                    </div>
+                                                </>
+                                            )
 
-                            return (
-                                <Link
-                                    key={service.id}
-                                    href={`/services/${service.slug}`}
-                                    className={cn(
-                                        'surface-card surface-card-hover flex min-h-44 flex-col p-4 shadow-lg',
-                                        tone.shadow,
-                                    )}
-                                >
-                                    <ServiceVisual
-                                        slug={service.slug}
-                                        className="size-12"
-                                        iconClassName="size-6"
-                                    />
-                                    <div className="mt-4 min-w-0 flex-1">
-                                        <h3 className="line-clamp-2 text-[15px] font-semibold leading-tight text-gray-950">
-                                            {service.title}
-                                        </h3>
-                                        <p className="mt-1 line-clamp-2 text-xs leading-5 text-gray-500">
-                                            {service.subtitle}
-                                        </p>
+                                            if (!bookable) {
+                                                return (
+                                                    <button
+                                                        key={service.id}
+                                                        type="button"
+                                                        onClick={() =>
+                                                            handleUnavailableService(
+                                                                service.title,
+                                                            )
+                                                        }
+                                                        className={cn(
+                                                            'surface-card flex min-h-44 flex-col p-4 text-left opacity-85 shadow-lg',
+                                                            tone.shadow,
+                                                        )}
+                                                    >
+                                                        {card}
+                                                    </button>
+                                                )
+                                            }
+
+                                            return (
+                                                <Link
+                                                    key={service.id}
+                                                    href={`/services/${service.slug}`}
+                                                    className={cn(
+                                                        'surface-card surface-card-hover flex min-h-44 flex-col p-4 shadow-lg',
+                                                        tone.shadow,
+                                                    )}
+                                                >
+                                                    {card}
+                                                </Link>
+                                            )
+                                        })}
                                     </div>
-                                    <div className="mt-3 flex items-center justify-between gap-2">
-                                        {service.providers_count !==
-                                            undefined && (
-                                            <span className="app-chip bg-gray-100 text-gray-600">
-                                                {service.providers_count}{' '}
-                                                provider
-                                                {service.providers_count !== 1
-                                                    ? 's'
-                                                    : ''}
-                                            </span>
-                                        )}
-                                        <ServiceChevron slug={service.slug} />
-                                    </div>
-                                </Link>
-                            )
-                        })}
+                                </section>
+                            ) : null,
+                        )}
                     </div>
                 )}
 

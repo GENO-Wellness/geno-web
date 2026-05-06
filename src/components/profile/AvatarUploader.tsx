@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
+import Image from 'next/image'
 import { FileUpload } from '@/components/ui/FileUpload'
 import { User, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
@@ -66,10 +67,13 @@ export function AvatarUploader({
             <div className="relative group">
                 <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-lg bg-gray-100 flex items-center justify-center">
                     {previewUrl ? (
-                        <img
+                        <Image
                             src={previewUrl}
                             alt="Avatar"
-                            className="w-full h-full object-cover transition-opacity group-hover:opacity-75"
+                            width={128}
+                            height={128}
+                            unoptimized
+                            className="h-full w-full object-cover transition-opacity group-hover:opacity-75"
                         />
                     ) : (
                         <User className="w-16 h-16 text-gray-400" />
