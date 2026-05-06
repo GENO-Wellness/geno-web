@@ -9,10 +9,14 @@ import { useAuthStore } from '@/lib/stores/auth-store'
 import type { Conversation, Message } from '@/types'
 import { FiArrowLeft, FiMessageSquare, FiSend } from 'react-icons/fi'
 
-function getInitials(name: string) {
-    return name
-        .split(' ')
-        .map(n => n[0])
+function getInitials(name?: string | null) {
+    const cleanName = typeof name === 'string' ? name.trim() : ''
+
+    if (!cleanName) return '?'
+
+    return cleanName
+        .split(/\s+/)
+        .map(part => part.charAt(0))
         .join('')
         .toUpperCase()
         .slice(0, 2)

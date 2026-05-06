@@ -8,10 +8,14 @@ import { AppHeader } from '@/components/layout/app-header'
 import type { Conversation } from '@/types'
 import { FiMessageSquare, FiSearch } from 'react-icons/fi'
 
-function getInitials(name: string) {
-    return name
-        .split(' ')
-        .map(n => n[0])
+function getInitials(name?: string | null) {
+    const cleanName = typeof name === 'string' ? name.trim() : ''
+
+    if (!cleanName) return '?'
+
+    return cleanName
+        .split(/\s+/)
+        .map(part => part.charAt(0))
         .join('')
         .toUpperCase()
         .slice(0, 2)
